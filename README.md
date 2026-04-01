@@ -6,6 +6,12 @@
 
 ---
 
+## Note : Repositori ini berisi Praktikum 1 sampai 4.
+
+---
+
+---
+
 # Praktikum 1: PHP Framework (Codeigniter)
 
 ---
