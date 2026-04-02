@@ -783,7 +783,7 @@ public function admin_index()
 
 Tambahan di Views\admin_index.php
 
-``php
+```php
 <form method="get" class="search-form">
     <input type="text" name="q" 
            value="<?= $_GET['q'] ?? ''; ?>" 
