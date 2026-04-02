@@ -685,6 +685,7 @@ Kemudian buat view untuk form tambah dengan nama form_add.php
 <?= $this->include('template/admin_footer'); ?>
 ```
 
+
 ![](image2/screenshot7.png)
 
 ### Mengubah Data
@@ -757,3 +758,40 @@ public function delete($id)
 Selesaikan programnya sesuai Langkah-langkah yang ada. Anda boleh melakukan improvisasi.
 
 ### Jawaban
+
+Untuk Improvisasi saya tambahkan menu search pada panel admin berikut kode tambahannya
+
+Tambahan di controller\artikel.php
+
+```php
+public function admin_index()
+{
+    $title = 'Daftar Artikel';
+    $model = new \App\Models\ArtikelModel();
+
+    $keyword = $this->request->getGet('q');
+
+    if ($keyword) {
+        $artikel = $model->like('judul', $keyword)->findAll();
+    } else {
+        $artikel = $model->findAll();
+    }
+
+    return view('artikel/admin_index', compact('artikel', 'title'));
+}
+```
+
+Tambahan di Views\admin_index.php
+
+``php
+<form method="get" class="search-form">
+    <input type="text" name="q" 
+           value="<?= $_GET['q'] ?? ''; ?>" 
+           placeholder="Cari artikel...">
+    <button type="submit">Cari</button>
+</form>
+```
+
+Hasil:
+
+![](image2/screenshot9.png)
