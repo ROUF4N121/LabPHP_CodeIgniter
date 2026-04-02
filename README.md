@@ -556,6 +556,8 @@ Buka Kembali file app/config/Routes.php, kemudian tambahkan routing untuk artike
 $routes->get('/artikel/(:any)', 'Artikel::view/$1');
 ```
 
+![](image2/screenshot5.png)
+
 ### Membuat Menu Admin
 
 Menu admin adalah untuk proses CRUD data artikel. Buat method baru pada Controller Artikel dengan nama admin_index().
@@ -635,7 +637,7 @@ $routes->group('admin', function($routes) {
 
 Akses menu admin dengan url http://localhost:8080/admin/artikel
 
-![](image2/screenshot5.png)
+![](image2/screenshot6.png)
 
 ### Menambah Data Artikel
 
@@ -683,7 +685,7 @@ Kemudian buat view untuk form tambah dengan nama form_add.php
 <?= $this->include('template/admin_footer'); ?>
 ```
 
-![](image2/screenshot6.png)
+![](image2/screenshot7.png)
 
 ### Mengubah Data
 
@@ -735,7 +737,7 @@ $data['isi'];?></textarea>
 <?= $this->include('template/admin_footer'); ?>
 ```
 
-![](image2/screenshot7.png)
+![](image2/screenshot8.png)
 
 ### Menghapus Data
 
