@@ -795,3 +795,315 @@ Tambahan di Views\admin_index.php
 Hasil:
 
 ![](image2/screenshot9.png)
+
+---
+
+# Praktikum 3: View Layout dan View Cell
+
+---
+
+## Deskripsi
+
+Tugas ini untuk memahami konsep View Layout di CodeIgniter 4, Menggunakan View Layout untuk membuat template tampilan, Memahami dan mengimplementasikan View Cell dalam CodeIgniter  dan Menggunakan View Cell untuk memanggil komponen UI secara modular.
+
+## Langkah-langkah
+
+### Persiapan
+
+Pada praktikum sebelumnya kita telah menggunakan template layout dengan konsep parsial atau memecah bagian template menjadi beberapa bagian untuk kemudian di include pada view yang lain.
+Praktikum kali ini kita akan mengunakan konsep View Layout dan View Cell untuk memudahkan dalam penggunaan layout.
+
+### Membuat Layout Utama
+
+Buat folder layout di dalam app/Views/
+Buat file main.php di dalam folder layout dengan kode berikut:
+
+```php
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><?= $title ?? 'My Website' ?></title>
+    <link rel="stylesheet" href="<?= base_url('/style.css');?>">
+</head>
+<body>
+    <div id="container">
+        <header>
+            <h1>The Topan News</h1>
+        </header>
+        <nav>
+            <a href="<?= base_url('/');?>" class="active">Home</a>
+            <a href="<?= base_url('/artikel');?>">Artikel</a>
+            <a href="<?= base_url('/about');?>">About</a>
+            <a href="<?= base_url('/contact');?>">Kontak</a>
+        </nav>
+        <section id="wrapper">
+            <section id="main">
+                <?= $this->renderSection('content') ?>
+            </section>
+            <aside id="sidebar">
+                <?= view_cell('App\\Cells\\ArtikelTerkini::render') ?>
+                <div class="widget-box">
+                    <h3 class="title">Widget Header</h3>
+                    <ul>
+                        <li><a href="#">Widget Link</a></li>
+                        <li><a href="#">Widget Link</a></li>
+                    </ul>
+                </div>
+                <div class="widget-box">
+                    <h3 class="title">Widget Text</h3>
+                    <p>Vestibulum lorem elit, iaculis in nisl volutpat, malesuada tincidunt arcu. Proin in leo fringilla, vestibulum mi porta, faucibus felis. Integer pharetra est nunc, nec pretium nunc pretium ac.</p>
+                </div>
+            </aside>
+        </section>
+        <footer>
+            <p>&copy; 2021 - Universitas Pelita Bangsa</p>
+        </footer>
+    </div>
+</body>
+</html>
+```
+
+### Modifikasi File View
+
+Ubah app/Views/home.php agar sesuai dengan layout baru:
+
+```php
+<?= $this->extend('layout/main') ?>
+
+<?= $this->section('content') ?>
+
+<h1><?= $title; ?></h1>
+<hr>
+<p><?= $content; ?></p>
+
+<?= $this->endSection() ?>
+```
+
+Sesuaikan juga untuk halaman lainnya yang ingin menggunakan format layout yang baru.
+
+### Menampilkan Data Dinamis dengan View Cell
+
+View Cell adalah fitur yang memungkinkan pemanggilan tampilan dalam bentuk komponen yang dapat digunakan ulang. Cocok digunakan untuk elemen-elemen yang sering muncul di berbagai halaman seperti sidebar, widget, atau menu navigasi.
+
+### Membuat Class View Cell
+
+Buat folder Cells di dalam app/
+Buat file ArtikelTerkini.php di dalam app/Cells/ dengan kode berikut:
+
+```php
+<?php
+
+namespace App\Cells;
+
+use CodeIgniter\View\Cell;
+use App\Models\ArtikelModel;
+
+class ArtikelTerkini extends Cell
+{
+    public function render()
+    {
+        $model = new ArtikelModel();
+        $artikel = $model->orderBy('created_at', 'DESC')->limit(5)->findAll();
+
+        return view('components/artikel_terkini', ['artikel' => $artikel]);
+    }
+}
+```
+
+### Membuat View untuk View Cell
+
+Buat folder components di dalam app/Views/
+Buat file artikel_terkini.php di dalam app/Views/components/ dengan kode berikut:
+
+```php
+<h3>Artikel Terkini</h3>
+<ul>
+<?php foreach ($artikel as $row): ?>
+    <li>
+        <a href="<?= base_url('/artikel/' . $row['slug']) ?>">
+            <?= $row['judul'] ?>
+        </a>
+    </li>
+<?php endforeach; ?>
+</ul>
+```
+
+### Hasil Dari Praktik
+
+![](image3/screenshot1.png)
+
+## Pertanyaan dan Tugas
+
+1. Sesuaikan data dengan praktikum sebelumnya, perlu melakukan perubahan field pada database dengan menambahkan tanggal agar dapat mengambil data artikel terbaru.
+2. Selesaikan programnya sesuai Langkah-langkah yang ada. Anda boleh melakukan improvisasi.
+3. Apa manfaat utama dari penggunaan View Layout dalam pengembangan aplikasi?
+4. Jelaskan perbedaan antara View Cell dan View biasa
+5. Ubah View Cell agar hanya menampilkan post dengan kategori tertentu.
+
+### Jawaban
+
+1. Menambahkan Field Tanggal
+
+Tambahan di Database:
+```sql
+ALTER TABLE artikel 
+ADD created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
+```
+
+Tambahan di app/models/ArtikelModel.php
+```php
+protected $allowedFields = [
+    'judul', 'isi', 'slug', 'gambar', 'created_at'
+];
+```
+
+Tambahan di app/cells/ArtikelTerkini.php
+```php
+$artikel = $model->orderBy('created_at', 'DESC')
+                 ->limit(5)
+                 ->findAll();
+```
+
+Edit di app/views/artikel/index.php untuk menambahkan tanggal di bawah judul.
+```php
+<h2>
+    <a href="<?= base_url('/artikel/' . $row['slug']); ?>">
+        <?= $row['judul']; ?>
+    </a>
+</h2>
+
+<small>
+    <?= date('d M Y', strtotime($row['created_at'])); ?>
+</small>
+```
+
+Edit di app/views/artikel/detail.php
+```php
+<h2><?= $artikel['judul']; ?></h2>
+
+<small>
+    <?= date('d M Y', strtotime($artikel['created_at'])); ?>
+</small>
+```
+
+Hasil:
+
+![](image3/screenshot2.png)
+
+2. Menambahkan Highlight berita terbaru.
+
+Untuk Improvisasi Saya Hanya Menambahkan Higlight artikel terbaru.
+
+Edit di app/views/artikel/index.php
+```php
+<?php if($artikel): $no = 1; foreach($artikel as $row): ?>
+<article class="entry">
+
+    <?php if($no == 1): ?>
+        <span style="color:red; font-weight:bold;">🔥 Terbaru</span>
+    <?php endif; ?>
+
+    <h2>
+        <a href="<?= base_url('/artikel/' . $row['slug']); ?>">
+            <?= $row['judul']; ?>
+        </a>
+    </h2>
+```
+
+```php
+</article>
+
+<?php $no++; ?>
+<hr class="divider" />
+```
+
+Edit di app/models/Artikel.php
+```php
+$artikel = $model->orderBy('created_at', 'DESC')->findAll();
+```
+
+Hasil:
+
+![](image3/screenshot3.png)
+
+3. View Layout digunakan untuk membuat tampilan yang konsisten di seluruh halaman aplikasi dengan memisahkan struktur utama (header, footer, sidebar) dari konten halaman. Hal ini memudahkan pengelolaan tampilan, mengurangi duplikasi kode, dan mempercepat pengembangan.
+
+4. View biasa digunakan untuk menampilkan data yang dikirim dari controller, sedangkan View Cell digunakan untuk membuat komponen kecil yang dapat mengambil data sendiri dan ditampilkan di dalam view tanpa melalui controller utama.
+
+5. Menambahkan Kategore Tertentu di View Cell
+
+Pertama, kita tambahkan di Database
+```sql
+ALTER TABLE artikel ADD kategori VARCHAR(50);
+```
+Disini Saya Ambil Artikel kedua sebagai Kategori Teknologi
+
+Ubahan Di app/Cells/ArtikelTerkini.php
+```php
+class ArtikelTerkini
+{
+    public function index($kategori = null)
+    {
+        $model = new ArtikelModel();
+
+        if ($kategori) {
+            $model->where('kategori', $kategori);
+        }
+
+        $artikel = $model->orderBy('created_at', 'DESC')
+                         ->limit(5)
+                         ->findAll();
+
+        return view('components/artikel_terkini', [
+            'artikel' => $artikel
+        ]);
+    }
+}
+```
+
+Ubahan di app/layout/main.php
+```php
+<?= view_cell('App\\Cells\\ArtikelTerkini::index', ['kategori' => 'Teknologi']) ?>
+```
+
+Hasil:
+
+![](image3/screenshot4.png)
+
+---
+
+# Praktikum 4: Framework Lanjutan (Modul Login)
+
+---
+
+## Deskripsi
+
+Tugas ini untuk memahami konsep dasar Auth dan Filter, memahami konsep dasar System dan membuat modul login menggunakan Framework Codeigniter 4.
+
+## Langkah-langkah
+
+### Persiapan
+
+Untuk memulai membuat modul Login, yang perlu disiapkan adalah database server menggunakan MySQL. Pastikan MySQL Server sudah dapat dijalankan melalui XAMPP.
+
+
+### Membuat Tabel: User Login
+
+![](image4/screenshot1.png)
+
+### Membuat Tabel User
+
+```sql
+CREATE TABLE user (
+    id INT(11) auto_increment,
+    username VARCHAR(200) NOT NULL,
+    useremail VARCHAR(200),
+    userpassword VARCHAR(200),
+    PRIMARY KEY(id)
+);
+```
+
+### Membuat Model User
+
+Selanjutnya adalah membuat Model untuk memproses data Login. Buat file baru pada direktori app/Models dengan nama UserModel.php
