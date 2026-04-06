@@ -1328,3 +1328,12 @@ public function logout()
 Selesaikan programnya sesuai Langkah-langkah yang ada. Anda boleh melakukan improvisasi.
 
 ### Jawaban
+
+Untuk Improvisasi cukup minor hanya maenambahkan efek hover
+
+```
+.entry:hover {
+    transform: scale(1.01);
+    transition: 0.2s;
+}
+```
