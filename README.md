@@ -1337,3 +1337,121 @@ Untuk Improvisasi cukup minor hanya maenambahkan efek hover
     transition: 0.2s;
 }
 ```
+
+---
+
+# Praktikum 5: Framework Lanjutan (Modul Login)
+
+---
+
+## Deskripsi
+
+Tugas ini untuk memahami konsep dasar Pagination, memahami konsep dasar pencarian dan membuat Paging dan Pencarian menggunakan Framework
+Codeigniter 4.
+
+## Langkah-langkah
+
+### Membuat Pagination
+
+Pagination merupakan proses yang digunakan untuk membatasi tampilan yang panjang dari data yang banyak pada sebuah website. Fungsi pagination adalah memecah tampilan menjadi beberapa halaman tergantung banyaknya data yang akan ditampilkan pada
+setiap halaman.
+
+Pada Codeigniter 4, fungsi pagination sudah tersedia pada Library sehingga cukup mudah menggunakannya.
+
+Untuk membuat pagination, buka Kembali Controller Artikel, kemudian modifikasi kode pada method admin_index seperti berikut.
+
+```php
+    public function admin_index()
+    {
+        $title = 'Daftar Artikel';
+        $model = new ArtikelModel();
+        $data = [
+            'title' => $title,
+            'artikel' => $model->paginate(10), #data dibatasi 10 record per halaman
+            'pager' => $model->pager,
+        ];
+        return view('artikel/admin_index', $data);
+    }
+```
+
+Kemudian buka file views/artikel/admin_index.php dan tambahkan kode berikut dibawah deklarasi tabel data.
+
+```php
+<?= $pager->links(); ?>
+```
+
+Selanjutnya buka kembali menu daftar artikel, tambahkan data lagi untuk melihat hasilnya.
+
+![](image5/screenshot1.png)
+
+### Membuat Pencarian
+
+Pencarian data digunakan untuk memfilter data.
+
+Untuk membuat pencarian data, buka kembali Controller Artikel, pada method admin_index ubah kodenya seperti berikut.
+
+```php
+    public function admin_index()
+    {
+        $title = 'Daftar Artikel';
+        $q = $this->request->getVar('q') ?? '';
+        $model = new ArtikelModel();
+        $data = [
+            'title' => $title,
+            'q' => $q,
+            'artikel' => $model->like('judul', $q)->paginate(10), # data dibatasi 10 record per halaman
+            'pager' => $model->pager,
+        ];
+        return view('artikel/admin_index', $data);
+    }
+```
+
+Kemudian buka kembali file views/artikel/admin_index.php dan tambahkan form pencarian sebelum deklarasi tabel seperti berikut:
+
+```php
+<form method="get" class="form-search">
+    <input type="text" name="q" value="<?= $q; ?>" placeholder="Cari data">
+    <input type="submit" value="Cari" class="btn btn-primary">
+</form>
+```
+
+Dan pada link pager ubah seperti berikut.
+
+```php
+<?= $pager->only(['q'])->links(); ?>
+```
+
+Selanjutnya ujicoba dengan membuka kembali halaman admin artikel, masukkan kata kunci tertentu pada form pencarian.
+
+![](image5/screenshot2.png)
+
+## Pertanyaan dan Tugas
+
+Selesaikan programnya sesuai Langkah-langkah yang ada. Anda boleh melakukan improvisasi.
+
+### Jawaban
+
+Unruk Improvisasi saya hanya jumlah hasil pencarian.
+
+Tambahan di app/controller/artikel.php
+
+```php
+$artikel = $model->like('judul', $q)->paginate(5);
+$pager = $model->pager;
+
+$total = $model->like('judul', $q)->countAllResults();
+
+return view('artikel/index', compact('artikel', 'pager', 'q', 'total'));
+```
+
+Menampilkannya di views/index.php atau admin_index.php.
+
+```php
+<?php if($q): ?>
+    <p>Ditemukan <?= $total; ?> hasil untuk "<b><?= $q; ?></b>"</p>
+<?php endif; ?>
+```
+
+Hasil:
+
+![](image5/screenshot2.png)

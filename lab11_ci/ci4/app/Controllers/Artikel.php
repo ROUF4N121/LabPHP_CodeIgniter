@@ -35,17 +35,26 @@ class Artikel extends BaseController
     public function admin_index()
     {
         $title = 'Daftar Artikel';
-        $model = new \App\Models\ArtikelModel();
+        $q = $this->request->getVar('q') ?? '';
+        $model = new ArtikelModel();
 
-        $keyword = $this->request->getGet('q');
-
-        if ($keyword) {
-            $artikel = $model->like('judul', $keyword)->findAll();
+        if ($q) {
+            $artikel = $model->like('judul', $q)->paginate(10);
+            $total   = $model->like('judul', $q)->countAllResults();
         } else {
-            $artikel = $model->findAll();
+            $artikel = $model->paginate(10);
+            $total   = $model->countAll();
         }
 
-        return view('artikel/admin_index', compact('artikel', 'title'));
+        $data = [
+            'title'   => $title,
+            'q'       => $q,
+            'artikel' => $artikel,
+            'pager'   => $model->pager,
+            'total'   => $total,
+        ];
+
+        return view('artikel/admin_index', $data);
     }
 
     public function add()

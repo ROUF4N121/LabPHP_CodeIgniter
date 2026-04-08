@@ -348,38 +348,44 @@ form textarea {
     color: #555;
 }
 
-/* Form pencarian */
-.search-form {
-    margin-bottom: 15px;
-}
-
-/* Input search */
-.search-form input[type="text"] {
-    padding: 6px 10px;
-    width: 200px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-/* Tombol cari */
-.search-form button {
-    padding: 6px 12px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-/* Hover tombol */
-.search-form button:hover {
-    background-color: #0056b3;
-}
-
-.search-form {
+/* Form Search */
+.form-search {
+    margin-bottom: 20px;
     display: flex;
     gap: 10px;
     align-items: center;
+}
+
+/* Input */
+.form-search input[type="text"] {
+    padding: 8px 12px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Focus biar keren */
+.form-search input[type="text"]:focus {
+    border-color: #1f5faa;
+    outline: none;
+    box-shadow: 0 0 5px rgba(31, 95, 170, 0.3);
+}
+
+/* Tombol */
+.form-search .btn-primary {
+    background-color: #1f5faa;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Hover */
+.form-search .btn-primary:hover {
+    background-color: #2b83ea;
 }
 
 .widget-box ul {
@@ -419,5 +425,57 @@ form textarea {
 .entry:hover {
     transform: scale(1.01);
     transition: 0.2s;
+}
+
+/* RESET dari table */
+.pagination {
+    margin-top: 20px;
+    clear: both;
+}
+
+.pagination ul {
+    list-style: none !important;
+    display: flex !important;
+    gap: 8px;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.pagination li {
+    display: inline-block !important;
+    background: none !important;
+    border: none !important;
+}
+
+/* tombol */
+.pagination a,
+.pagination span {
+    display: inline-block;
+    padding: 8px 12px;
+    background: #ddd !important;
+    color: #333 !important;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+/* hover */
+.pagination a:hover {
+    background: #2b83ea !important;
+    color: white !important;
+}
+
+/* aktif */
+.pagination .active span {
+    background: #2b83ea !important;
+    color: white !important;
+}
+
+.pagination * {
+    all: unset;
+}
+
+.pagination ul {
+    display: flex;
+    gap: 8px;
 }
 

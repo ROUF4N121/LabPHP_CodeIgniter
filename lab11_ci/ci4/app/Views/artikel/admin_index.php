@@ -2,13 +2,16 @@
 
 <link rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
 
-<form method="get" class="search-form">
-    <input type="text" name="q" 
-           value="<?= $_GET['q'] ?? ''; ?>" 
-           placeholder="Cari artikel...">
-    <button type="submit">Cari</button>
-</form>
 <br>
+
+<form method="get" class="form-search">
+    <input type="text" name="q" value="<?= $q; ?>" placeholder="Cari data">
+    <input type="submit" value="Cari" class="btn btn-primary">
+</form>
+
+<?php if($q): ?>
+    <p>Ditemukan <?= $total; ?> hasil untuk "<b><?= $q; ?></b>"</p>
+<?php endif; ?>
 
 <table class="table">
     <thead>
@@ -50,5 +53,9 @@ $row['id']);?>">Hapus</a>
         </tr>
     </tfoot>
 </table>
+
+<div class="pagination">
+    <?= $pager->only(['q'])->links(); ?>
+</div>
 
 <?= $this->include('template/admin_footer'); ?>
